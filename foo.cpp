@@ -1,7 +1,7 @@
 // A simple program that computes the square root of a number
-#include 
-#include 
-#include 
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
 #include "Config.h"
 
 int main (int argc, char *argv[])
