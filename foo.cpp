@@ -1,19 +1,21 @@
-// A simple program that computes the square root of a number
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include "Config.h"
+#include <boost/variant.hpp>
+#include <string>
+#include <iostream>
 
-int main (int argc, char *argv[])
+struct output : public boost::static_visitor<>
 {
-  if (argc < 2)
-    {
-    fprintf(stdout,"Usage: %s number\n",argv[0]);
-    return 1;
-    }
-  double inputValue = atof(argv[1]);
-  double outputValue = sqrt(inputValue);
-  fprintf(stdout,"The square root of %g is %g\n",
-          inputValue, outputValue);
-  return 0;
+    void operator()(double d) const { std::cout << d << std::endl; }
+    void operator()(char c) const { std::cout << c << std::endl; }
+    void operator()(std::string s) const { std::cout << s << std::endl; }
+};
+
+int main()
+{
+    boost::variant<double, char, std::string> v;
+    v = 3.14;
+    boost::apply_visitor(output{}, v);
+    v = 'A';
+    boost::apply_visitor(output{}, v);
+    v = "Boost";
+    boost::apply_visitor(output{}, v);
 }
