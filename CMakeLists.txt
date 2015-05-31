@@ -39,6 +39,7 @@ set(TEST_SOURCES
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 INCLUDE(Define_CompilerFlags)
 
+message(STATUS "USING ${CMAKE_CXX_COMPILER_ID} compiler")
 
 
 ########################################################
