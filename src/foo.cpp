@@ -1,6 +1,7 @@
 #include <boost/variant.hpp>
 #include <string>
 #include <iostream>
+#include "Config.h"
 
 struct output : public boost::static_visitor<>
 {
