@@ -38,12 +38,18 @@ set(TEST_SOURCES
 # libraries. This must be done before the find_package commands.
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
-# Find external libraries used by the program.
-set(Boost_USE_STATIC_LIBS ON) 
-set(Boost_USE_MULTITHREADED ON)  
-set(Boost_USE_STATIC_RUNTIME OFF) 
-add_definitions( -DBOOST_ALL_NO_LIB )
 
+########################################################
+########################BOOST###########################
+########################################################
+
+if (MSVC)
+    add_definitions( -DBOOST_ALL_NO_LIB )
+    set(Boost_USE_STATIC_LIBS       ON)
+    set(Boost_USE_MULTITHREADED     ON)
+    set(Boost_USE_STATIC_RUNTIME    ON)
+#   set(BOOST_LIBRARYDIR            /Boost/boost_1_56_0/lib64-msvc-12.0)
+endif()
 
 # The Boost date_time library doesn't really do anything for the sample
 # program. It's meant to demonstrate how to find external libraries.
