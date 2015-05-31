@@ -4,6 +4,6 @@ add_executable(${PROJECT_NAME} ${MAIN_SOURCE} ${PROJECT_SOURCES})
 
 # Set the directory for "make install" to place the binary file.
 install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_SOURCE_DIR}/bin)
-
+message(STATUS "Target link libraries: ${Boost_LIBRARIES}")
 target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES})
 
