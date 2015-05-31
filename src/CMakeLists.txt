@@ -1,10 +1,9 @@
+# Build the main executable. 
+add_executable(${PROJECT_NAME} ${MAIN_SOURCE} ${PROJECT_SOURCES})
 
-# configure a header file to pass some of the CMake settings
-# to the source code
-configure_file (
-  "${PROJECT_SOURCE_DIR}/Config.h.in"
-  "${PROJECT_BINARY_DIR}/Config.h"
-  )
 
-ADD_SUBDIRECTORY( subdir )
-MACRO_ADD_SOURCES( foo.cpp )
+# Set the directory for "make install" to place the binary file.
+install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_SOURCE_DIR}/bin)
+
+target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES})
+

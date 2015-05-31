@@ -1,46 +1,29 @@
+cmake_minimum_required(VERSION 2.8)
 
-CMAKE_MINIMUM_REQUIRED(VERSION 3.2.2)
+# The project name will be the name of the binary executable created. The
+# test code will also be named ${PROJECT_NAME}_test.
+set(PROJECT_NAME my_project)
+project(${PROJECT_NAME})
 
-# See http://git.libssh.org/projects/libssh.git/tree/ for example of a good project configuration.
+# Project numbers that aren't currently used for anything.
+set(${PROJECT_NAME}_VERSION_MAJOR 0)
+set(${PROJECT_NAME}_VERSION_MINOR 1)
 
-# Global vars
+# File containing the main function of the standard build. This is listed
+# separately so that it's not included in the test suite build (otherwise we
+# might have two main functions. This should be empty if only a library is
+# being generated.
+set(MAIN_SOURCE
+        Main.cpp
+    )
 
-SET(CMAKE_PROJECT_NAME "CppLearning")
-
-SET(EXECUTABLE_NAME "CppLearning")
-
-SET(EXECUTABLE_VERSION_MAJOR "0")
-SET(EXECUTABLE_VERSION_MINOR "0")
-SET(EXECUTABLE_VERSION_PATCH "0")
-
-SET(EXECUTABLE_VERSION "${EXECUTABLE_VERSION_MAJOR}.${EXECUTABLE_VERSION_MINOR}.${EXECUTABLE_VERSION_PATCH}")
-
-# configure a header file to pass some of the CMake settings
-# to the source code
-configure_file (
-  "Config.h.in"
-  "Config.h"
-  )
-
-# Additional CMake modules, specific for this project
-SET(CMAKE_MODULE_PATH
-  ${CMAKE_SOURCE_DIR}/CMake/Modules
-  )
-
-# Load those modules
-INCLUDE(Define_CMakeDefaults)
-INCLUDE(Define_PlatformDefaults)
-INCLUDE(Define_CompilerFlags)
-
-# Project command is here, to set some values correctly.
-PROJECT(${CMAKE_PROJECT_NAME})
-
-# Nifty marco, which forbids in source build. (source: http://git.libssh.org/projects/libssh.git)
-INCLUDE(Macro_EnsureOutOfSourceBuild)
-MACRO_ENSURE_OUT_OF_SOURCE_BUILD("${PROJECT_NAME}  requires an out of source build. Please create a separate build directory and run 'cmake /path/to/${CMAKE_PROJECT_NAME} [options]' there.")
-
-# Another macro used in this project to add sources efficiently.
-INCLUDE(Macro_AddSources)
+# Source files for the standard build. These are defined here so that the
+# test suite knows which source files to compile against. Compiler options
+# for the standard build are in the CMakeLists.txt file in the src
+# subdirectory.
+set(PROJECT_SOURCES
+        MyMath.cpp
+    )
 
 # Source files for the test suite. This should only include source files in
 # the test subdirectory. Compiler options for the test build are located in
@@ -49,27 +32,28 @@ set(TEST_SOURCES
         TestMyMath.cpp
     )
 
+# Tell cmake where to find the files that tell it where to find files. The
+# cmake subdirectory should contain .cmake files that define custom
+# functions and Find*.cmake files that tell cmake where to look for
+# libraries. This must be done before the find_package commands.
+set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
-#Add aditional components.
-FIND_PACKAGE ( Boost COMPONENTS serialization system filesystem REQUIRED )
-
-# add the boost include dirs
-include_directories(${Boost_INCLUDE_DIRS})
-
-
-
-
-set(Boost_USE_STATIC_LIBS        ON) # only find static libs
-set(Boost_USE_MULTITHREADED      ON)
-set(Boost_USE_STATIC_RUNTIME    OFF)
+# Find external libraries used by the program.
+set(Boost_USE_STATIC_LIBS ON) 
+set(Boost_USE_MULTITHREADED ON)  
+set(Boost_USE_STATIC_RUNTIME OFF) 
+add_definitions( -DBOOST_ALL_NO_LIB )
 
 
-MESSAGE(STATUS "Current built type: ${CMAKE_BUILD_TYPE}")
-MESSAGE(STATUS "Current build type flags: ${CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE}}")
+# The Boost date_time library doesn't really do anything for the sample
+# program. It's meant to demonstrate how to find external libraries.
+find_package(Boost COMPONENTS date_time REQUIRED)
 
-MESSAGE(STATUS "Configuring application ${APPLICATION_NAME}")
+# Find the header files for the external libraries.
+include_directories(${Boost_INCLUDE_DIR})
 
-MACRO_PREPARE_SOURCES(PROJECT_SOURCES)
+# Local header files are placed in the include directory.
+include_directories(include)
 
 # The googletest code should be unzipped and placed in the gtest directory.
 # No user-created files should be placed in the gtest directory.
@@ -81,22 +65,9 @@ include_directories(gtest/include)
 # Project source files should be placed in the src subdirectory.
 add_subdirectory(src)
 
+# Test source files should be placed in the test subdirectory.
+add_subdirectory(test)
 
-#Line below outputs all included source.
-MACRO_PRINT_SOURCES()
 
-INCLUDE_DIRECTORIES(
-    ${Boost_INCLUDE_DIR}
-)
-
-ADD_EXECUTABLE(
-    ${EXECUTABLE_NAME}
-    ${PROJECT_SOURCES}
-)
-
-TARGET_LINK_LIBRARIES(
-    ${EXECUTABLE_NAME}
-    ${Boost_LIBRARIES}
-)
 
 
